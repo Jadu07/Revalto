@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "@/Services/api";
 
 export default function Posts({ activeCategory = "All" }) {
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -63,7 +65,11 @@ export default function Posts({ activeCategory = "All" }) {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {posts.map((post) => (
-              <div key={post.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow">
+              <div 
+                key={post.id} 
+                onClick={() => navigate(`/product/${post.id}`)}
+                className="border rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer"
+              >
                 <img src={post.itemImgUrl} alt={post.itemName} className="w-full h-48 object-cover rounded-lg mb-3" />
                 <h3 className="font-semibold text-gray-800 text-lg truncate">{post.itemName}</h3>
                 <p className="text-sm text-gray-600 line-clamp-2 mb-2">{post.description}</p>
