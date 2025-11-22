@@ -33,6 +33,7 @@ export default function SellPage() {
           </h1>
 
           <button
+            onClick={() => navigate("/add-product")}
             className="font-poppins mx-auto inline-flex items-center justify-center rounded-lg bg-blue-700 hover:bg-green-500 text-white px-10 py-2 text-sm font-semibold shadow "
           >
             Add Now
