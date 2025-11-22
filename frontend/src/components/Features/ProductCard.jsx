@@ -19,7 +19,7 @@ export default function Posts({ activeCategory = "All" }) {
   const fetchPosts = async (pageNumber, category, isNewCategory = false) => {
     setLoading(true);
     try {
-      const limit = 1;
+      const limit = 20;
       const endpoint =
         category === "All"
           ? `/posts?page=${pageNumber}&limit=${limit}`
