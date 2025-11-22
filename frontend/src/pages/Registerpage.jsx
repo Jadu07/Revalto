@@ -8,7 +8,7 @@ export default function RegisterPage() {
       <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-2 overflow-hidden">
         
         {/* Form Section */}
-        <div className="flex items-center justify-center bg-gradient-to-br from-gray-50 to-white p-4 sm:p-6 md:p-8 lg:p-12 overflow-auto">
+        <div className="flex items-center justify-center bg-linear-to-br from-gray-50 to-white p-4 sm:p-6 md:p-8 lg:p-12 overflow-auto">
           <div className="w-full max-w-md">
             <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8 md:p-10">
               <LoginForm className="text-gray-900" mode="Sign up"/>
@@ -17,7 +17,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Image Section */}
-        <div className="relative hidden md:flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-8 overflow-hidden max-h-screen">
+        <div className="relative hidden md:flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 p-8 overflow-hidden max-h-screen">
           <div 
             className="relative w-full h-full max-h-full bg-cover bg-center rounded-lg bg-no-repeat"
             style={{ 
@@ -28,7 +28,7 @@ export default function RegisterPage() {
             role="img"
             aria-label="Registration background"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900/40 to-gray-900/60 rounded-lg"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-gray-900/40 to-gray-900/60 rounded-lg"></div>
           </div>
         </div>
 

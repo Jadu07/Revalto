@@ -5,6 +5,7 @@ import Homepage from "./pages/homepage.jsx";
 import Profile from "./pages/Profile.jsx";
 import EditProfile from "./pages/EditProfile.jsx";
 import SellPage from "./pages/SellPage.jsx";
+import ProductPage from "./pages/ProductPage.jsx";
 import { SocketProvider } from "./context/SocketContext.jsx"
 import ChatRoom from "./components/ChatRoom.jsx";
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<EditProfile />} />
         <Route path="/sell" element={<SellPage />} />
+        <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/chat" element={
           <SocketProvider>
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">

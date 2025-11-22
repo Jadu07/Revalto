@@ -111,3 +111,48 @@ export const getPosts = async(req,res) => {
     }
 }
 
+export const getPostById = async(req,res) => {
+    try {
+        const postId = parseInt(req.params.id);
+        
+        if (isNaN(postId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid post ID",
+            });
+        }
+
+        const post = await prisma.post.findUnique({
+            where: { id: postId },
+            include: {
+                author: {
+                    select: {
+                        id: true,
+                        name: true,
+                        userName: true,
+                        email: true,
+                        imgUrl: true,
+                        annonymousImgUrl: true,
+                        isProfileAnonymous: true,
+                    },
+                },
+            },
+        });
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found",
+            });
+        }
+
+        return res.status(200).json(post);
+    } catch(error) {
+        console.error("Error fetching post by ID:", error);
+        res.status(500).json({ 
+            message: "Internal server error.", 
+            error: error.message 
+        });
+    }
+}
+
