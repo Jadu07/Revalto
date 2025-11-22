@@ -111,7 +111,7 @@ export const getPosts = async(req,res) => {
     }
 }
 
-export const getPostById = async(req,res) => {
+export const getPostByPostId = async(req,res) => {
     try {
         const postId = parseInt(req.params.id);
         
@@ -156,3 +156,67 @@ export const getPostById = async(req,res) => {
     }
 }
 
+export const getPostByAuthorId = async(req,res) => {
+    try {
+        const authorId = parseInt(req.params.id);
+        
+        if (isNaN(authorId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid author ID",
+            });
+        }
+
+        const posts = await prisma.post.findMany({
+            where: { authorId: authorId },
+            orderBy : {
+                id : 'asc'
+            }
+        });
+
+        if (!posts) {
+            return res.status(404).json({
+                success: false,
+                message: "No Post found",
+            });
+        }
+
+        return res.status(200).json(posts);
+    } catch(error) {
+        console.error("Error fetching author by ID:", error);
+        res.status(500).json({ 
+            message: "Internal server error.", 
+            error: error.message 
+        });
+    }
+}
+
+export const updatePost = async(req,res) => {
+    try{
+        const postId = parseInt(req.params.id)
+        if(isNaN(postId)){
+            return res.status(400).json({ message: "Invalid post ID" });
+    }
+        const validation = createPostSchema.partial().safeParse(req.body)
+
+        if(!validation.success) {
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validation.error.format(),
+            });
+        }
+
+        const updatedPost = await prisma.post.update({
+            where : { id : postId},
+            data : validation.data
+        })
+        return res.status(200).json(updatedPost)
+
+    }catch(error){
+        console.error("Error updating post:", error);
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message,
+        });
+    }
+}
