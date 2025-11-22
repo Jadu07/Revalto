@@ -1,21 +1,49 @@
 import { prisma } from "../../DB/config.js";
 import bcrypt from "bcrypt";
+import { z } from "zod";
+
+const updateProfileSchema = z.object({
+  // .optional() allows undefined (not provided) values it is same as saying "The user didn't touch this field, so keep the existing image as it is."
+  name: z.string().min(2).max(50).optional(),
+  password: z.string().min(6).optional(),
+  gender: z.enum(["Male", "Female", "Others"]).optional(),
+  phone: z
+    .string()
+    .regex(/^\d{10}$/, "Phone must be 10 digits")
+    .optional(),
+  hostel: z
+    .enum(["Your_Space_01", "Your_Space_02", "UniSpace_Boys", "UniSpace_Girls"])
+    .optional(),
+  roomNumber: z.coerce.number().int().optional(),
+  academicYear: z.enum(["First", "Second", "Third", "Fourth"]).optional(),
+  isProfileAnonymous: z.boolean().optional(),
+  // Allow a valid URL to update, undefined(optional) to skip (keep current), or an empty string to explicitly delete the image
+  imgUrl: z.string().url().optional().or(z.literal("")),
+  annonymousImgUrl: z.string().url().optional(),
+});
 
 export const updateUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    const updateData = { ...req.body };
+    const validation = updateProfileSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: validation.error.format(),
+      });
+    }
+    const { isVerified, id, email, createdAt, updatedAt, ...allowedUpdates } = validation.data;
 
-    if (updateData.password) {
-      const hashedPassword = await bcrypt.hash(updateData.password, 10);
-      updateData.password = hashedPassword;
+    if (allowedUpdates.password) {
+      const hashedPassword = await bcrypt.hash(allowedUpdates.password, 10);
+      allowedUpdates.password = hashedPassword;
     } else {
-      delete updateData.password;
+      delete allowedUpdates.password;
     }
 
     const user = await prisma.user.update({
       where: { id: userId },
-      data: updateData,
+      data: allowedUpdates,
     });
 
     return res.status(200).json({

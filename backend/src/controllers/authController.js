@@ -1,33 +1,36 @@
 import {prisma} from "../../DB/config.js"
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import dotenv from 'dotenv';
-dotenv.config()
+import { z } from "zod"
 
+const registerSchema = z.object({
+  email: z.string().email().endsWith("@adypu.edu.in", {
+    message: "Only @adypu.edu.in email addresses are allowed."
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters"
+  }),
+  userName: z.string().min(3, {
+    message: "Username must be at least 3 characters"
+  }).max(20, {
+    message: "Username cannot exceed 20 characters"
+  }),
+});
 
-
-const isAdypuEmail = (email) => {
-  return email.toLowerCase().endsWith('@adypu.edu.in');
-};
 
 export const createUser = async (req, res) => {
 
-  const { 
-    email, 
-    password, 
-    userName, 
-  } = req.body;
   try {
-    if (!userName || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    const validation = registerSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: validation.error.format(),
+      });
     }
+    const { email, password, userName } = validation.data;
     const newEmail = email.toLowerCase();
 
-    if (!isAdypuEmail(newEmail)) {
-        return res.status(400).json({
-         message: 'Only @adypu.edu.in email addresses are allowed.',
-    });
-    }
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
@@ -36,7 +39,6 @@ export const createUser = async (req, res) => {
         ]
       }
     });
-
 
 
     if (existingUser) {
@@ -50,7 +52,10 @@ export const createUser = async (req, res) => {
             userName: userName, 
         }
     });
-    return res.status(201).json({ message: "User registered successfully",user: { id: newUser.id, userName: newUser.userName, email: newUser.email }, });
+    return res.status(201).json({
+      message: "User registered successfully",
+      user: { id: newUser.id, userName: newUser.userName, email: newUser.email },
+    });
     } catch (err) {
         console.error("Registration error:", err);
         return res.status(500).json({ message: "Server error during registration" });
