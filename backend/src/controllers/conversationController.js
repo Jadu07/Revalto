@@ -10,7 +10,8 @@ export const getOrCreateConversation = async(req,res) => {
             where: { 
                 userAId, 
                 userBId, 
-                postId },
+                postId 
+            },
             include: { 
                 messages: true },
     });
@@ -92,16 +93,16 @@ export const sendMessage = async (req, res) => {
 
     try {
         const message = await prisma.message.create({
-        data: {
-            conversationId,
-            senderId,
-            text,
-        },
-        include: {
-            sender: {
-            select: { id: true, userName: true, imgUrl: true },
+            data: {
+                conversationId,
+                senderId,
+                text,
             },
-        },
+            include: {
+                sender: {
+                select: { id: true, userName: true, imgUrl: true },
+                },
+            },
         });
 
         res.status(201).json(message);
