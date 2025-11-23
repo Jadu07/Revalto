@@ -1,12 +1,27 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import Navbar from "@/components/Common/Navbar";
 import { api } from "@/Services/api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
+  const { user } = useAuth();
+
+  const handleContact = async() => {
+    try{
+      const res = await api.post("/conversations",{
+        postId : product.id
+      })
+      console.log(res)
+      navigate(`/chat/${res.data.id}`)
+    }catch(err){
+      console.log(err)
+    }
+  }
 
   useEffect(() => {
     api.get(`/posts/id/${id}`).then(res => setProduct(res.data)).finally(() => setLoading(false));
@@ -78,7 +93,7 @@ export default function ProductPage() {
                   <p className="text-sm text-gray-500">@{displayUsername}</p>
                 </div>
               </div>
-              <button className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">CONTACT</button>
+              <button onClick={handleContact} disabled={product.authorId==user.id} className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70">CONTACT</button>
             </div>
           </div>
         </div>
