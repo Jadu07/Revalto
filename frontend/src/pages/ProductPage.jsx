@@ -21,9 +21,10 @@ export default function ProductPage() {
     </div>
   );
 
-  const { author, itemImgUrl, itemName, category, isAvailable, createdAt, secondHandPrice, originalPrice, condition, warrantyRemaining, description } = product;
+  const { author, itemImgUrl, itemName, category, isAvailable, createdAt, secondHandPrice, originalPrice, condition, warrantyRemaining, description, isPostedAnonymously } = product;
   const discount = Math.round(((originalPrice - secondHandPrice) / originalPrice) * 100);
-  const displayName = author.name || author.userName;
+  const displayName = isPostedAnonymously ? "Anonymous" : (author.name || author.userName);
+  const displayUsername = isPostedAnonymously ? `anon${author.id}` : author.userName;
 
   return (
     <div className="min-h-screen w-full bg-gray-50">
@@ -70,11 +71,11 @@ export default function ProductPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden shrink-0">
-                  {author.imgUrl?<img src={author.imgUrl} alt={displayName} className="w-full h-full object-cover" />:<span className="text-gray-600 font-semibold text-lg">{displayName.charAt(0).toUpperCase()}</span>}
+                  {!isPostedAnonymously && author.imgUrl?<img src={author.imgUrl} alt={displayName} className="w-full h-full object-cover" />:<span className="text-gray-600 font-semibold text-lg">{displayName.charAt(0).toUpperCase()}</span>}
                 </div>
                 <div className="flex flex-col justify-center -space-y-1">
                   <p className="font-bold mt-2 mb-0 text-gray-900 text-base">{displayName}</p>
-                  <p className="text-sm text-gray-500">@{author.userName}</p>
+                  <p className="text-sm text-gray-500">@{displayUsername}</p>
                 </div>
               </div>
               <button className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">CONTACT</button>
