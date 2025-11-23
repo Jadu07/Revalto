@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Common/Navbar";
-import { ImagePlus, User, UserX, Check, Loader2, ArrowRight } from "lucide-react";
+import { ImagePlus, User, UserX, Loader2, ArrowRight  } from "lucide-react";
 
 const INIT_STATE = {
   itemName: "", description: "", originalPrice: "", secondHandPrice: "",
@@ -78,11 +78,11 @@ export default function AddProduct() {
         authorId: user.id 
       });
       alert("Product added successfully!");
-      nav("/sell");
+      nav("/sell")
     } catch (err) {
       alert(err.response?.data?.message || "Failed to create post");
     } finally {
-      setLoad(false);
+      setLoad(false)
     }
   };
 
@@ -140,18 +140,16 @@ export default function AddProduct() {
             </div>
             <div><label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3 block">Privacy</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button type="button" onClick={() => setData(p => ({...p, isPostedAnonymously: false}))} className={`group relative p-3.5 rounded-xl border-2 transition-all duration-200 ${!data.isPostedAnonymously ? 'border-gray-900 bg-linear-to-br from-gray-900 to-gray-800 text-white shadow-lg shadow-gray-900/20 scale-[1.02]' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300 hover:shadow-md'}`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${!data.isPostedAnonymously ? 'bg-white/15' : 'bg-gray-50 group-hover:bg-gray-100'}`}><User className="w-5 h-5" /></div>
-                    <div className="text-left flex-1 min-w-0"><p className="font-bold text-sm leading-tight mb-1">Public Profile</p><p className={`text-xs leading-tight ${!data.isPostedAnonymously ? 'text-white/70' : 'text-gray-500'}`}>Your name will be visible</p></div>
-                    {!data.isPostedAnonymously && <div className="shrink-0 animate-in fade-in duration-200"><div className="w-6 h-6 rounded-full bg-white flex items-center justify-center"><Check className="w-4 h-4 text-gray-900" /></div></div>}
+                <button type="button" onClick={() => setData(p => ({...p, isPostedAnonymously: false}))} className={`p-3 rounded-xl border-2 transition ${!data.isPostedAnonymously ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'}`}>
+                  <div className="flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    <span className="font-semibold text-sm">Public</span>
                   </div>
                 </button>
-                <button type="button" onClick={() => setData(p => ({...p, isPostedAnonymously: true}))} className={`group relative p-3.5 rounded-xl border-2 transition-all duration-200 ${data.isPostedAnonymously ? 'border-gray-900 bg-linear-to-br from-gray-900 to-gray-800 text-white shadow-lg shadow-gray-900/20 scale-[1.02]' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300 hover:shadow-md'}`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${data.isPostedAnonymously ? 'bg-white/15' : 'bg-gray-50 group-hover:bg-gray-100'}`}><UserX className="w-5 h-5" /></div>
-                    <div className="text-left flex-1 min-w-0"><p className="font-bold text-sm leading-tight mb-1">Stay Anonymous</p><p className={`text-xs leading-tight ${data.isPostedAnonymously ? 'text-white/70' : 'text-gray-500'}`}>Keep your identity hidden</p></div>
-                    {data.isPostedAnonymously && <div className="shrink-0 animate-in fade-in duration-200"><div className="w-6 h-6 rounded-full bg-white flex items-center justify-center"><Check className="w-4 h-4 text-gray-900" /></div></div>}
+                <button type="button" onClick={() => setData(p => ({...p, isPostedAnonymously: true}))} className={`p-3 rounded-xl border-2 transition ${data.isPostedAnonymously ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'}`}>
+                  <div className="flex items-center gap-2">
+                    <UserX className="w-5 h-5" />
+                    <span className="font-semibold text-sm">Anonymous</span>
                   </div>
                 </button>
               </div>
