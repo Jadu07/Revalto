@@ -1,38 +1,80 @@
 import {prisma} from "../../DB/config.js"
 
 export const getOrCreateConversation = async(req,res) => {
-    const {userAId, userBId, postId, purchaseRequestId} = req.body
-    if (!userAId || !userBId || !postId) {
-        return res.status(400).json({ message: "Missing required fields" });
-    }
     try{
-        let conversation = await prisma.conversation.findFirst({
-            where: { 
-                userAId, 
-                userBId, 
-                postId 
-            },
-            include: { 
-                messages: true },
-    });
+        const buyerId = req.user.id
+        const {postId} = req.body
+        if(!postId){
+            return res.status(400).json({ message: "postId is required" });
+        }
 
-    if(!conversation){
-        conversation = await prisma.conversation.create({
-            data: {
-                userAId,
-                userBId,
+        const post = await prisma.post.findUnique({
+            where : {
+                id : postId
+            },
+            select : {
+                authorId : true
+            }
+        })
+
+        if(!post){
+            return res.status(404).json({message : "Post not found"})
+        }
+
+        const sellerId = post.authorId
+
+        console.log("POSTID:", postId);
+        console.log("POST:", post);
+        console.log("BUYER:", buyerId);
+        console.log("SELLER:", post?.authorId);
+
+        if(buyerId==sellerId){
+            return res.status(400).json({message: "Buyer and seller can't be same!"})
+        }
+        let purchaseRequest = await prisma.purchaseRequest.findUnique({
+            where : {
+                postId_buyerId: {
+                    postId,
+                    buyerId
+                }
+            }
+        })
+        if(!purchaseRequest){
+            purchaseRequest = await prisma.purchaseRequest.create({
+                data : {
+                    buyerId,postId
+                }
+            })
+        }
+        const conversation = await prisma.conversation.findFirst({
+            where : {
                 postId,
-                purchaseRequestId,
+                userAId : buyerId,
+                userBId : sellerId,
+                purchaseRequestId : purchaseRequest.id
             },
-            include: { messages: true },
-        });
-    }
-
-    res.status(200).json(conversation);
-  }catch(error){
+            include : {
+                messages : true
+            }
+        })
+        if(!conversation){
+            conversation = await prisma.conversation.create({
+                data : {
+                    postId,
+                    userAId : buyerId,
+                    userBId : sellerId,
+                    purchaseRequestId : purchaseRequest.id
+                },
+                include : {
+                    messages : true
+                }
+            })
+        }
+        return res.status(200).json(conversation)
+    }catch(error){
         console.error("Error creating/getting conversation:", error);
         res.status(500).json({ message: "Internal Server Error" });
-  }
+    }
 }
 
 
