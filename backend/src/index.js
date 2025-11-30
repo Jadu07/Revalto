@@ -59,4 +59,8 @@ if (process.env.VERCEL) {
     });
 }
 
-export default app;
+// Export a handler for Vercel that uses the HTTP server instance
+// This allows Socket.IO to intercept requests before Express
+export default (req, res) => {
+    server.emit('request', req, res);
+};
