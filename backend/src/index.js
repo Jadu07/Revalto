@@ -15,11 +15,11 @@ dotenv.config()
 const app = express()
 const server = http.createServer(app);
 
-const io = new Server(server,{
- cors : {
-    origin : 'http://localhost:5173',
-    credentials : true
- }
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173',
+        credentials: true
+    }
 })
 
 io.use(verifySocketToken)
@@ -29,20 +29,29 @@ app.use(cookieParser())
 app.use(express.json({ limit: "10mb" }))
 
 app.use(cors({
-    origin : 'http://localhost:5173',
-    credentials : true
+    origin: 'http://localhost:5173',
+    credentials: true
 }))
 
 
-app.use('/',authRoutes)
+app.use('/', authRoutes)
 app.use("/posts", postRoutes);
-app.use('/users',userRoutes)
+app.use('/users', userRoutes)
 app.use("/conversations", conversationRoutes);
 
 chatSocket(io)
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, "0.0.0.0",() => {
-    console.log(`Server running on port http://localhost:${PORT}`)
-});
+if (process.env.VERCEL) {
+    // Vercel serverless environment
+    // We need to export the express app for Vercel to handle
+    // Note: Socket.IO might have limitations in serverless
+} else {
+    // Local development or traditional server environment
+    server.listen(PORT, "0.0.0.0", () => {
+        console.log(`Server running on port http://localhost:${PORT}`)
+    });
+}
+
+export default app;

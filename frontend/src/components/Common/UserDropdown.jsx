@@ -15,10 +15,10 @@ export default function UserDropdown({ userName, userEmail }) {
   return (
     <div className="relative">
       <div
-        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors flex-shrink-0"
+        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors shrink-0"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <img src="/user.png" alt="User" className="h-8 w-8 flex-shrink-0" />
+        <img src="/user.png" alt="User" className="h-8 w-8 shrink-0" />
         {userName && (
           <span className="text-sm font-medium text-gray-800 capitalize hidden md:block whitespace-nowrap">
             {userName}
