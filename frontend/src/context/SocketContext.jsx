@@ -9,10 +9,10 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const backendURL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
-    
+
     const socketInstance = io(backendURL, {
-      withCredentials: true, 
-      transports: ["websocket", "polling"], 
+      withCredentials: true,
+      transports: ["polling"], // Vercel does not support "websocket"
     });
 
     setSocket(socketInstance);
@@ -28,24 +28,24 @@ export const SocketProvider = ({ children }) => {
     });
 
     socketInstance.on("connect_error", async (error) => {
-        console.error("Socket connection error:", error.message);
-        setIsConnected(false);
+      console.error("Socket connection error:", error.message);
+      setIsConnected(false);
 
-        // Handle auth failure
-        if (error.message.includes("Unauthorized") || error.message.includes("token")) {
-            console.warn("Attempting to refresh access token...");
+      // Handle auth failure
+      if (error.message.includes("Unauthorized") || error.message.includes("token")) {
+        console.warn("Attempting to refresh access token...");
 
-            try {
-                await fetch(`${backendURL}/refresh`, {
-                    method: "POST",
-                    credentials: "include",
-                });
-                console.log("🔄 Token refreshed, reconnecting socket...");
-                socketInstance.connect(); // Retry connection
-            } catch (refreshError) {
-                console.error("Token refresh failed, please login again.");
-            }
+        try {
+          await fetch(`${backendURL}/refresh`, {
+            method: "POST",
+            credentials: "include",
+          });
+          console.log("🔄 Token refreshed, reconnecting socket...");
+          socketInstance.connect(); // Retry connection
+        } catch (refreshError) {
+          console.error("Token refresh failed, please login again.");
         }
+      }
     });
 
 
